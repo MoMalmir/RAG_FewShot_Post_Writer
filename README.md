@@ -36,3 +36,4 @@ The system was validated against a "Golden Evaluation Set" of expert-written pos
 | **Hallucination** | **0.00** | 100% factual grounding in source article content. |
 | **ROUGE-L** | **~0.23** | Demonstrates creative synthesis rather than verbatim copying. |
 
+**Note:** For the full detailed evaluation of all test cases, please navigate to the `data/` folder and view the `evaluation_dashboard.xlsx` file.
