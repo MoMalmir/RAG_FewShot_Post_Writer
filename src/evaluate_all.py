@@ -9,10 +9,7 @@ from bert_score import score as bert_score
 from deepeval.metrics import GEval, HallucinationMetric
 from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from deepeval.models.base_model import DeepEvalBaseLLM  
-# from ragas import evaluate
-# from ragas.metrics import Faithfulness, ContextPrecision
-# from ragas.llms import llm_factory
-# from datasets import Dataset
+
 
 # --- LangChain & Main Imports ---
 from langchain_openai import ChatOpenAI 
@@ -173,13 +170,6 @@ def run_comprehensive_evaluation():
     tone_scores = []
     hallucination_scores = []
 
-    # for pred in eval_df['prediction']:
-    #     test_case = LLMTestCase(input="N/A", actual_output=pred)
-    #     tone_metric.measure(test_case)
-    #     tone_scores.append(tone_metric.score)
-    # eval_df['deepeval_tone'] = tone_scores
-    
-    # print('GEval_tone_metric', tone_scores)
 
     for pred, ctx in zip(eval_df['prediction'], eval_df['context']):
         # Create a test case that includes the context for hallucination check
@@ -204,42 +194,6 @@ def run_comprehensive_evaluation():
     print('deepeval_tone', tone_scores)
     print('deepeval_hallucination', hallucination_scores)
 
-    # # 4. RAGAS (Faithfulness)
-    # ragas_client = OpenAI(
-    # api_key=os.getenv("OPENROUTER_API_KEY"),
-    # base_url="https://openrouter.ai/api/v1"
-    # )
-
-    # # Use llm_factory to create InstructorLLM
-    # ragas_llm = llm_factory(
-    #     model=MODEL_NAME, 
-    #     client=ragas_client
-    # )
-
-    # f_metric = Faithfulness(llm=ragas_llm)
-    # cp_metric = ContextPrecision(llm=ragas_llm)
-
-    # ragas_data = Dataset.from_dict({
-    #     "question": [row['title'] for row in results_for_df],
-    #     "answer": eval_df['prediction'].tolist(),
-    #     "contexts": [[c] for c in eval_df['context'].tolist()],
-    #     "ground_truth": eval_df['reference'].tolist() 
-    # })
-    
-    # print("Running RAGAS Analysis (Faithfulness + Context Precision)...")
-    # ragas_results = evaluate(
-    #     ragas_data, 
-    #     metrics=[f_metric, cp_metric],
-    #     llm=ragas_llm 
-    # )
-    
-    # # Store scores back into your Excel dashboard
-    # ragas_df = ragas_results.to_pandas()
-    # eval_df['ragas_faithfulness'] = ragas_df['faithfulness']
-    # eval_df['ragas_context_precision'] = ragas_df['context_precision']
-    
-    # print('ragas_faithfulness: ', ragas_df['faithfulness'])
-    # print('ragas_context_precision', ragas_df['context_precision'])
 
     # --- OUTPUT ---
     output_path = "data/evaluation_dashboard.xlsx"
@@ -259,10 +213,6 @@ def run_comprehensive_evaluation():
     print(f"BERTScore (F1):       {eval_df['bertscore_f1'].mean():.4f}")
     print("-" * 30)
 
-    # # --- RAG Metrics (RAGAS) ---
-    # # ragas_results is a dict-like object returned by evaluate()
-    # print(f"RAGAS Faithfulness:   {eval_df['ragas_faithfulness'].mean():.4f}")
-    # print(f"RAGAS Context Prec:   {eval_df['ragas_context_precision'].mean():.4f}")
     
     # --- LLM Judge Metrics (DeepEval) ---
     if 'deepeval_tone' in eval_df.columns:
